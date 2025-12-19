@@ -11,6 +11,8 @@ namespace {
                 return "WhoseQuest";
             case Settings::Modules::WhoseItem:
                 return "WhoseItem";
+            case Settings::Modules::SPBMGCK:
+                return "SPBMGCK";
             default:
                 return "Unknown";
         }
@@ -44,6 +46,34 @@ void SubMod::BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv) {
             loreCache.insert(obj);
         }
     }
+}
+
+void SubMod::BuildLoreCache(const RE::ItemList* a_itemList) {
+    if (!a_itemList) {
+        logger::error("BuildLoreCache called with null ItemList");
+        return;
+    }
+    for (const auto& item : a_itemList->items) {
+        #undef GetObject
+        const auto obj = item->data.objDesc->GetObject();
+        if (!obj || !obj->GetPlayable() || obj->Is(RE::FormType::LeveledItem)) {
+            continue;
+        }
+        RE::BGSKeywordForm* a_kw_form;
+        if (const auto ammo = obj->As<RE::TESAmmo>()) {
+            a_kw_form = ammo->AsKeywordForm();
+        } else {
+            a_kw_form = obj->As<RE::BGSKeywordForm>();
+        }
+        if (!a_kw_form) {
+            continue;
+        }
+        if (!loreCache.contains(obj)) {
+            a_kw_form->AddKeyword(kw);
+            loreCache.insert(obj);
+        }
+    }
+    RE::SendUIMessage::SendInventoryUpdateMessage(RE::PlayerCharacter::GetSingleton(), nullptr);
 }
 
 void SubMod::ClearLoreCache() {
@@ -174,13 +204,14 @@ void Settings::Save() {
     }
 }
 
-
-LoreGetter Settings::LoreGetters::GetLoreGetter(Modules a_module) {
+LoreGetter Settings::LoreGetters::GetLoreGetter(const Modules a_module) {
     switch (a_module) {
         case Modules::WhoseQuest:
             return GetLoreWQ;
         case Modules::WhoseItem:
             return GetLoreIO;
+        case Modules::SPBMGCK:
+            return GetLoreSPBMGCK;
         default:
             return {};
     }
@@ -220,6 +251,17 @@ std::string Settings::LoreGetters::GetLoreIO(RE::InventoryEntryData* a_entryData
             if (const auto a_name = clib_util::editorID::get_editorID(a_owner); !a_name.empty()) {
                 return a_name;
             }
+        }
+    }
+    return "";
+}
+
+std::string Settings::LoreGetters::GetLoreSPBMGCK(RE::InventoryEntryData* a_entryData) {
+    const auto a_obj = a_entryData->GetObject();
+    if (const auto a_book = a_obj->As<RE::TESObjectBOOK>()) {
+        if (const auto a_spell = a_book->GetSpell()) {
+            float a_cost = a_spell->CalculateMagickaCost(RE::PlayerCharacter::GetSingleton());
+            return fmt::format("{:.0f} Magicka", a_cost);
         }
     }
     return "";

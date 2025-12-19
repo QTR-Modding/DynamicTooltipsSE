@@ -3,6 +3,8 @@
 namespace Hooks {
     void Install();
 
+    inline bool update_on_next = false;
+
     template <typename MenuType>
     class MenuHook : public MenuType {
         using ProcessMessage_t = decltype(&MenuType::ProcessMessage);
@@ -10,6 +12,6 @@ namespace Hooks {
         RE::UI_MESSAGE_RESULTS ProcessMessage_Hook(RE::UIMessage& a_message);
 
     public:
-        static void InstallHook(const REL::VariantID& varID);
+        static void InstallHook();
     };
 }

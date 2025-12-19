@@ -1,5 +1,19 @@
 #include "Utils.h"
 
+namespace {
+    template <typename T>
+    RE::InventoryEntryData* GetSelectedEntryInMenuHelper() {
+        if (const auto a_menu = RE::UI::GetSingleton()->GetMenu<T>()) {
+            if (const auto a_itemList = a_menu->GetRuntimeData().itemList) {
+                if (const auto item = a_itemList->GetSelectedItem()) {
+                    return item->data.objDesc;
+                }
+            }
+        }
+        return nullptr;
+    }
+}
+
 RE::BGSKeyword* Utils::MakeKeyword(const std::string& a_kw_name) {
     return RE::BGSKeyword::CreateKeyword(a_kw_name);
 }
@@ -40,30 +54,14 @@ RE::TESForm* Utils::GetOwner(const RE::InventoryEntryData* a_entryData) {
 }
 
 RE::InventoryEntryData* Utils::GetSelectedEntryInMenu() {
-    if (const auto ui = RE::UI::GetSingleton()) {
-        if (const auto menu_c = ui->GetMenu<RE::ContainerMenu>()) {
-            if (const auto a_itemList = menu_c->GetRuntimeData().itemList) {
-                if (const auto item = a_itemList->GetSelectedItem()) {
-                    return item->data.objDesc;
-                }
-            }
-        } else if (const auto menu_i = ui->GetMenu<RE::InventoryMenu>()) {
-            if (const auto a_itemList = menu_i->GetRuntimeData().itemList) {
-                if (const auto item = a_itemList->GetSelectedItem()) {
-                    return item->data.objDesc;
-                }
-            }
-        } else if (const auto menu_f = ui->GetMenu<RE::FavoritesMenu>()) {
-            RE::GFxValue selectedIndex;
-            const auto& runtime_data = menu_f->GetRuntimeData();
-            if (runtime_data.root.GetMember("selectedIndex", &selectedIndex) && selectedIndex.IsNumber()) {
-                const std::int32_t selected_index = static_cast<std::int32_t>(selectedIndex.GetNumber());
-                const auto& items = runtime_data.favorites;
-                if (selected_index >= 0 && static_cast<uint32_t>(selected_index) < items.size()) {
-                    return items[selected_index].entryData;
-                }
-            }
-        }
+    if (const auto a_item = GetSelectedEntryInMenuHelper<RE::InventoryMenu>()) {
+        return a_item;
+    }
+    if (const auto a_item = GetSelectedEntryInMenuHelper<RE::ContainerMenu>()) {
+        return a_item;
+    }
+    if (const auto a_item = GetSelectedEntryInMenuHelper<RE::BarterMenu>()) {
+        return a_item;
     }
     return nullptr;
 }

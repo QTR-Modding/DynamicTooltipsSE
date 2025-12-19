@@ -13,6 +13,7 @@ struct SubMod {
     std::string_view GetTitle() const { return title; }
     std::string GetLore() const;
     void BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv);
+    void BuildLoreCache(const RE::ItemList* a_itemList);
     void ClearLoreCache();
 
     explicit SubMod(const std::string& a_name, const SubModFeatures& a_features);
@@ -44,6 +45,7 @@ namespace Settings {
     enum class Modules : uint8_t {
         WhoseQuest = 0,
         WhoseItem,
+        SPBMGCK,
         kTotal
     };
 
@@ -57,6 +59,7 @@ namespace Settings {
         LoreGetter GetLoreGetter(Modules a_module);
         std::string GetLoreWQ(RE::InventoryEntryData* a_entryData);
         std::string GetLoreIO(RE::InventoryEntryData* a_entryData);
+        std::string GetLoreSPBMGCK(RE::InventoryEntryData* a_entryData);
     }
 }
 
