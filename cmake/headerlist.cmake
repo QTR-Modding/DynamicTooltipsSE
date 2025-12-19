@@ -5,4 +5,7 @@ set(headers ${headers}
 	include/Settings.h
 	include/Hooks.h
 	include/MCP.h
+	include/LoreBox.h
+	include/SubMods.h
+	include/DTF.h
 )

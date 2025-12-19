@@ -1,0 +1,67 @@
+#pragma once
+#include <unordered_set>
+#include "LoreBox.h"
+
+using LoreGetter = std::function<std::string(RE::InventoryEntryData*)>;
+
+struct SubModFeatures {
+    bool enabled = true;
+    RE::NiColor titleColor = RE::NiColor(67.f / 255.f, 222.f / 255.f, 16.f / 255.f);
+    LoreGetter getLore;
+};
+
+struct SubMod {
+    std::string_view GetTitle() const { return title; }
+    std::string GetLore() const;
+    void BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv);
+    void BuildLoreCache(const RE::ItemList* a_itemList);
+    void ClearLoreCache();
+
+    explicit SubMod(const std::string& a_name, const SubModFeatures& a_features);
+
+    explicit operator bool() const { return features.enabled; }
+    void Toggle(bool a_enable);
+
+    RE::NiColor GetColor() const;
+    void ChangeColor(const RE::NiColor& a_color);
+    std::string GetKeywordName() const;
+
+private:
+    using LoreCache = std::unordered_set<RE::TESBoundObject*>;
+    LoreCache loreCache;
+    RE::BGSKeyword* kw;
+    std::string title;
+    SubModFeatures features;
+};
+
+namespace SubMods {
+    enum class Modules : uint8_t { WhoseQuest = 0, WhoseItem, SPBMGCK, kTotal };
+
+    inline std::string ToString(const Modules a_module) {
+        switch (a_module) {
+            case Modules::WhoseQuest:
+                return "WhoseQuest";
+            case Modules::WhoseItem:
+                return "WhoseItem";
+            case Modules::SPBMGCK:
+                return "SPBMGCK";
+            default:
+                return "Unknown";
+        }
+    }
+
+    inline LoreGetter GetLoreGetter(Modules a_module) {
+        switch (a_module) {
+            case Modules::WhoseQuest:
+                return LoreBox::LoreGetters::GetLoreWQ;
+            case Modules::WhoseItem:
+                return LoreBox::LoreGetters::GetLoreIO;
+            case Modules::SPBMGCK:
+                return LoreBox::LoreGetters::GetLoreSPBMGCK;
+            default:
+                return {};
+        }
+    }
+
+    inline std::unordered_map<Modules, SubMod> subMods;
+}
