@@ -34,6 +34,7 @@ RE::UI_MESSAGE_RESULTS Hooks::MenuHook<MenuType>::ProcessMessage_Hook(RE::UIMess
             for (auto& a_sub : Modules::modules | std::views::values) {
                 a_sub.BuildLoreCache(bartermenu->GetRuntimeData().itemList);
             }
+            RE::SendUIMessage::SendInventoryUpdateMessage(RE::PlayerCharacter::GetSingleton(), nullptr);
         }
     } else if (msg_type == 3) {
         update_on_next = false;

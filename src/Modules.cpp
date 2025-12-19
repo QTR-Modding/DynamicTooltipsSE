@@ -56,7 +56,6 @@ void Module::BuildLoreCache(const RE::ItemList* a_itemList) {
             loreCache.insert(obj);
         }
     }
-    RE::SendUIMessage::SendInventoryUpdateMessage(RE::PlayerCharacter::GetSingleton(), nullptr);
 }
 
 void Module::ClearLoreCache() {
