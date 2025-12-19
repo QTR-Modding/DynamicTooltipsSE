@@ -35,6 +35,7 @@ private:
 namespace Settings {
     inline std::string mod_name = "Dynamic Tooltips";
     inline bool disallow_editorIDs = false;
+    inline bool show_titles = true;
 
     void Load();
     void Save();

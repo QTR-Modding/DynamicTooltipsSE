@@ -18,6 +18,9 @@ void MCP::RenderSettings() {
             changed = true;
         }
     }
+    if (ImGuiMCP::Checkbox("Show Titles in Tooltips", &Settings::show_titles)) {
+        changed = true;
+    }
     if (ImGuiMCP::Checkbox("Disallow Editor IDs in Tooltips", &Settings::disallow_editorIDs)) {
         changed = true;
     }

@@ -116,6 +116,7 @@ void Settings::Load() {
     }
 
     // Other
+    show_titles = ini.GetBoolValue("Other", "bShowTitles", show_titles);
     disallow_editorIDs = ini.GetBoolValue("Other", "bDisallowEditorIDs", disallow_editorIDs);
 
     // Only force-create/write if missing/failed load; otherwise you may overwrite user edits every startup.
@@ -158,6 +159,7 @@ void Settings::Save() {
         ini.SetBoolValue("Modules", ("b" + moduleName).c_str(), enabled);
         ini.SetLongValue("Modules", ("iColor" + moduleName).c_str(), Utils::ConvertColor(color));
         // Other
+        ini.SetBoolValue("Other", "bShowTitles", show_titles);
         ini.SetBoolValue("Other", "bDisallowEditorIDs", disallow_editorIDs);
     }
 
@@ -237,7 +239,9 @@ const wchar_t* OnDynamicTranslationRequest(std::string_view a_key) {
         if (const auto subModIt = Settings::subMods.find(a_module); subModIt != Settings::subMods.end()) {
             if (const auto lore = subModIt->second.GetLore(); !lore.empty()) {
                 std::string title;
-                title = subModIt->second.GetTitle();
+                if (Settings::show_titles) {
+                    title = subModIt->second.GetTitle();
+                }
                 if (!title.empty()) {
                     // add color to the title
                     const auto packed = Utils::ConvertColor(subModIt->second.GetColor());
@@ -245,13 +249,13 @@ const wchar_t* OnDynamicTranslationRequest(std::string_view a_key) {
                     const uint32_t g = (packed >> 8) & 0xFF;
                     const uint32_t b = (packed >> 16) & 0xFF;
 
-                    const uint32_t rgb = (r << 16) | (g << 8) | b; // 0xRRGGBB
+                    const uint32_t rgb = (r << 16) | (g << 8) | b;  // 0xRRGGBB
                     const auto hex = fmt::format("{:06X}", rgb);
                     const auto titleHtml = fmt::format("<font color=\"#{}\">{}</font>", hex, title);
                     result_str = Utils::utf8_to_wstring(titleHtml);
                     result_str += L"\n";
-                    result_str += Utils::utf8_to_wstring(lore);
                 }
+                result_str += Utils::utf8_to_wstring(lore);
             }
         }
     }
