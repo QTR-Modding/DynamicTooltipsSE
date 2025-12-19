@@ -1,15 +1,15 @@
-#include "SubMods.h"
+#include "Modules.h"
 #include "Utils.h"
 
 
-std::string SubMod::GetLore() const {
+std::string Module::GetLore() const {
     if (const auto a_entry = Utils::GetSelectedEntryInMenu()) {
         return features.getLore(a_entry);
     }
     return "";
 }
 
-void SubMod::BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv) {
+void Module::BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv) {
     for (const auto& [obj, entry] : a_inv) {
         if (entry.first <= 0 || !obj->GetPlayable() || obj->Is(RE::FormType::LeveledItem)) {
             continue;
@@ -31,7 +31,7 @@ void SubMod::BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv) {
     }
 }
 
-void SubMod::BuildLoreCache(const RE::ItemList* a_itemList) {
+void Module::BuildLoreCache(const RE::ItemList* a_itemList) {
     if (!a_itemList) {
         logger::error("BuildLoreCache called with null ItemList");
         return;
@@ -59,7 +59,7 @@ void SubMod::BuildLoreCache(const RE::ItemList* a_itemList) {
     RE::SendUIMessage::SendInventoryUpdateMessage(RE::PlayerCharacter::GetSingleton(), nullptr);
 }
 
-void SubMod::ClearLoreCache() {
+void Module::ClearLoreCache() {
     for (const auto a_obj : loreCache) {
         RE::BGSKeywordForm* a_kw_form;
         if (const auto ammo = a_obj->As<RE::TESAmmo>()) {
@@ -74,7 +74,7 @@ void SubMod::ClearLoreCache() {
     loreCache.clear();
 }
 
-SubMod::SubMod(const std::string& a_name, const SubModFeatures& a_features) : features(a_features) {
+Module::Module(const std::string& a_name, const ModuleFeatures& a_features) : features(a_features) {
     if (!SKSE::Translation::Translate("$" + a_name + "Title", title)) {
         logger::error("Failed to translate title for sub-mod '{}'", a_name);
     }
@@ -83,15 +83,15 @@ SubMod::SubMod(const std::string& a_name, const SubModFeatures& a_features) : fe
     }
 }
 
-void SubMod::Toggle(const bool a_enable) {
+void Module::Toggle(const bool a_enable) {
     features.enabled = a_enable;
     if (!features.enabled) {
         ClearLoreCache();
     }
 }
 
-RE::NiColor SubMod::GetColor() const { return features.titleColor; }
+RE::NiColor Module::GetColor() const { return features.titleColor; }
 
-void SubMod::ChangeColor(const RE::NiColor& a_color) { features.titleColor = a_color; }
+void Module::ChangeColor(const RE::NiColor& a_color) { features.titleColor = a_color; }
 
-std::string SubMod::GetKeywordName() const { return kw->GetFormEditorID(); }
+std::string Module::GetKeywordName() const { return kw->GetFormEditorID(); }

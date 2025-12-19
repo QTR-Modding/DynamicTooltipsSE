@@ -4,20 +4,20 @@
 
 using LoreGetter = std::function<std::string(RE::InventoryEntryData*)>;
 
-struct SubModFeatures {
+struct ModuleFeatures {
     bool enabled = true;
     RE::NiColor titleColor = RE::NiColor(67.f / 255.f, 222.f / 255.f, 16.f / 255.f);
     LoreGetter getLore;
 };
 
-struct SubMod {
+struct Module {
     std::string_view GetTitle() const { return title; }
     std::string GetLore() const;
     void BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv);
     void BuildLoreCache(const RE::ItemList* a_itemList);
     void ClearLoreCache();
 
-    explicit SubMod(const std::string& a_name, const SubModFeatures& a_features);
+    explicit Module(const std::string& a_name, const ModuleFeatures& a_features);
 
     explicit operator bool() const { return features.enabled; }
     void Toggle(bool a_enable);
@@ -31,10 +31,10 @@ private:
     LoreCache loreCache;
     RE::BGSKeyword* kw;
     std::string title;
-    SubModFeatures features;
+    ModuleFeatures features;
 };
 
-namespace SubMods {
+namespace Modules {
     enum class Modules : uint8_t { WhoseQuest = 0, WhoseItem, SPBMGCK, kTotal };
 
     inline std::string ToString(const Modules a_module) {
@@ -63,5 +63,5 @@ namespace SubMods {
         }
     }
 
-    inline std::unordered_map<Modules, SubMod> subMods;
+    inline std::unordered_map<Modules, Module> modules;
 }

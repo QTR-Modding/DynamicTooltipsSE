@@ -5,6 +5,6 @@ set(sources ${sources}
 	src/Hooks.cpp
 	src/MCP.cpp
 	src/LoreBox.cpp
-	src/SubMods.cpp
+	src/Modules.cpp
 	src/DTF.cpp
 )

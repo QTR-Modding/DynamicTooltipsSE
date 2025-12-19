@@ -6,6 +6,6 @@ set(headers ${headers}
 	include/Hooks.h
 	include/MCP.h
 	include/LoreBox.h
-	include/SubMods.h
+	include/Modules.h
 	include/DTF.h
 )

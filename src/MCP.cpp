@@ -1,11 +1,11 @@
 #include "MCP.h"
 #include "Settings.h"
-#include "SubMods.h"
+#include "Modules.h"
 #include "SKSEMCP/SKSEMenuFramework.hpp"
 
 void MCP::RenderSettings() {
     bool changed = false;
-    for (auto& subMod : SubMods::subMods | std::views::values) {
+    for (auto& subMod : Modules::modules | std::views::values) {
         bool enabled = static_cast<bool>(subMod);
         auto a_title = subMod.GetTitle();
         if (ImGuiMCP::Checkbox(a_title.data(), &enabled)) {

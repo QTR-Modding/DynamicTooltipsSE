@@ -12,4 +12,3 @@ namespace Settings {
         inline std::string path = "Data\\SKSE\\Plugins\\DynamicTooltips\\DynamicTooltips.ini";
     }
 }
-

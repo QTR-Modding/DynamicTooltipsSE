@@ -1,5 +1,5 @@
 #include "Settings.h"
-#include "SubMods.h"
+#include "Modules.h"
 #include "Utils.h"
 #include "ClibUtil/detail/SimpleIni.h"
 
@@ -12,13 +12,13 @@ void Settings::Load() {
         logger::info("INI not found or failed to load (rc={}): {}", loadRC, INI::path);
     }
 
-    SubMods::subMods.clear();
+    Modules::modules.clear();
 
-    for (auto i = 0; i < static_cast<int>(SubMods::Modules::kTotal); ++i) {
-        const auto module = static_cast<SubMods::Modules>(i);
+    for (auto i = 0; i < static_cast<int>(Modules::Modules::kTotal); ++i) {
+        const auto module = static_cast<Modules::Modules>(i);
         const auto moduleName = ToString(module);
 
-        SubModFeatures features;
+        ModuleFeatures features;
 
         // Read existing values (or defaults)
         {
@@ -32,17 +32,16 @@ void Settings::Load() {
             features.titleColor = Utils::ConvertColor(c);
         }
 
-        features.getLore = SubMods::GetLoreGetter(module);
+        features.getLore = Modules::GetLoreGetter(module);
 
         auto a_name = "quantDT" + moduleName;
-        SubMods::subMods.emplace(module, SubMod{a_name, features});
+        Modules::modules.emplace(module, Module{a_name, features});
     }
 
     // Other
     show_titles = ini.GetBoolValue("Other", "bShowTitles", show_titles);
     disallow_editorIDs = ini.GetBoolValue("Other", "bDisallowEditorIDs", disallow_editorIDs);
 
-    // Only force-create/write if missing/failed load; otherwise you may overwrite user edits every startup.
     if (loadRC < 0) {
         Save();
     }
@@ -52,7 +51,6 @@ void Settings::Save() {
     CSimpleIniA ini;
     ini.SetUnicode();
 
-    // Optional: load first to preserve unrelated sections/keys/comments
     ini.LoadFile(INI::path.c_str());
 
     // Ensure folder exists
@@ -65,15 +63,14 @@ void Settings::Save() {
         logger::error("Failed to create directories for INI path '{}': {}", INI::path, e.what());
     }
 
-    for (auto i = 0; i < static_cast<int>(SubMods::Modules::kTotal); ++i) {
-        const auto module = static_cast<SubMods::Modules>(i);
+    for (auto i = 0; i < static_cast<int>(Modules::Modules::kTotal); ++i) {
+        const auto module = static_cast<Modules::Modules>(i);
         const auto moduleName = ToString(module);
 
-        // Pull values from your live subMods if present; otherwise write sensible defaults.
         bool enabled = true;
         RE::NiColor color(0.8f, 0.8f, 0.2f);
 
-        if (auto it = SubMods::subMods.find(module); it != SubMods::subMods.end()) {
+        if (auto it = Modules::modules.find(module); it != Modules::modules.end()) {
             enabled = static_cast<bool>(it->second);
             color = it->second.GetColor();
         }
