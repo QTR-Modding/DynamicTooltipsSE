@@ -22,7 +22,7 @@ std::string LoreBox::GetLoreWQ(const RE::InventoryEntryData* a_entryData) {
 }
 
 std::string LoreBox::GetLoreIO(const RE::InventoryEntryData* a_entryData) {
-    if (const auto a_owner = Utils::GetOwner(a_entryData)) {
+    if (const auto a_owner = Utils::GetOwner(a_entryData); a_owner && !a_owner->IsPlayer() && !a_owner->IsPlayerRef()) {
         if (const auto a_fullnameform = a_owner->As<RE::TESFullName>()) {
             if (const auto a_name = a_fullnameform->GetFullName(); !Utils::is_empty(a_name)) {
                 return a_name;
