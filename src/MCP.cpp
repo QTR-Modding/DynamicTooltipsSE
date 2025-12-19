@@ -17,11 +17,9 @@ void MCP::RenderSettings() {
             subMod.ChangeColor(RE::NiColor(col[0], col[1], col[2]));
             changed = true;
         }
-
-        // disallow editor IDs setting
-        if (ImGuiMCP::Checkbox("Disallow Editor IDs in Tooltips", &Settings::disallow_editorIDs)) {
-            changed = true;
-        }
+    }
+    if (ImGuiMCP::Checkbox("Disallow Editor IDs in Tooltips", &Settings::disallow_editorIDs)) {
+        changed = true;
     }
     if (changed) {
         Settings::Save();
