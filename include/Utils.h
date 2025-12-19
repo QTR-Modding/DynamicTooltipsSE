@@ -1,23 +1,12 @@
 #pragma once
 
 namespace Utils {
-    inline RE::TESQuest* GetQuest(const RE::InventoryEntryData* a_entryData) {
-        RE::TESQuest* quest = nullptr;
-        if (a_entryData && a_entryData->extraLists) {
-            for (const auto& xList : *a_entryData->extraLists) {
-                if (const auto xAliasInstArr = xList->GetByType<RE::ExtraAliasInstanceArray>()) {
-                    for (const auto& instance : xAliasInstArr->aliases) {
-                        if (instance->quest && instance->alias && instance->alias->IsQuestObject()) {
-                            quest = instance->quest;
-                            break;
-                        }
-                    }
-                }
-                if (quest) {
-                    break;
-                }
-            }
-        }
-        return quest;
-    }
+    RE::BGSKeyword* MakeKeyword(const std::string& a_kw_name);
+    RE::TESQuest* GetQuest(const RE::InventoryEntryData* a_entryData);
+    RE::TESForm* GetOwner(const RE::InventoryEntryData* a_entryData);
+    RE::InventoryEntryData* GetSelectedEntryInMenu();
+    uint32_t ConvertColor(const RE::NiColor& a_color);
+    RE::NiColor ConvertColor(uint32_t a_color);
+    inline bool is_empty(const char* s) { return s == nullptr || s[0] == '\0'; }
+    std::wstring utf8_to_wstring(std::string_view s);
 }
