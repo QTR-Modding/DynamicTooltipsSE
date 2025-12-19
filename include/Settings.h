@@ -5,7 +5,7 @@ using LoreGetter = std::function<std::string(RE::InventoryEntryData*)>;
 
 struct SubModFeatures {
     bool enabled = true;
-    RE::NiColor titleColor = RE::NiColor(0.8f, 0.8f, 0.2f);
+    RE::NiColor titleColor = RE::NiColor(67.f / 255.f, 222.f / 255.f, 16.f / 255.f);
     LoreGetter getLore;
 };
 

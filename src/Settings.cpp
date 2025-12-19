@@ -243,7 +243,7 @@ const wchar_t* OnDynamicTranslationRequest(std::string_view a_key) {
                     const uint32_t g = (packed >> 8) & 0xFF;
                     const uint32_t b = (packed >> 16) & 0xFF;
 
-                    const uint32_t rgb = (r << 16) | (g << 8) | b;  // 0xRRGGBB
+                    const uint32_t rgb = (r << 16) | (g << 8) | b; // 0xRRGGBB
                     const auto hex = fmt::format("{:06X}", rgb);
                     const auto titleHtml = fmt::format("<font color=\"#{}\">{}</font>", hex, title);
                     result_str = Utils::utf8_to_wstring(titleHtml);
