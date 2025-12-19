@@ -50,14 +50,14 @@ namespace Modules {
         }
     }
 
-    inline LoreGetter GetLoreGetter(Modules a_module) {
+    inline LoreGetter GetLoreGetter(const Modules a_module) {
         switch (a_module) {
             case Modules::WhoseQuest:
-                return LoreBox::LoreGetters::GetLoreWQ;
+                return LoreBox::GetLoreWQ;
             case Modules::WhoseItem:
-                return LoreBox::LoreGetters::GetLoreIO;
+                return LoreBox::GetLoreIO;
             case Modules::SPBMGCK:
-                return LoreBox::LoreGetters::GetLoreSPBMGCK;
+                return LoreBox::GetLoreSPBMGCK;
             default:
                 return {};
         }

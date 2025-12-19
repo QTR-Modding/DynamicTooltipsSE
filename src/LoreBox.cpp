@@ -3,7 +3,7 @@
 #include "Utils.h"
 #include "ClibUtil/editorID.hpp"
 
-std::string LoreBox::LoreGetters::GetLoreWQ(const RE::InventoryEntryData* a_entryData) {
+std::string LoreBox::GetLoreWQ(const RE::InventoryEntryData* a_entryData) {
     if (const auto a_quest = Utils::GetQuest(a_entryData)) {
         std::string a_name;
         if (a_name = a_quest->GetFullName(); !a_name.empty()) {
@@ -21,7 +21,7 @@ std::string LoreBox::LoreGetters::GetLoreWQ(const RE::InventoryEntryData* a_entr
     return "";
 }
 
-std::string LoreBox::LoreGetters::GetLoreIO(const RE::InventoryEntryData* a_entryData) {
+std::string LoreBox::GetLoreIO(const RE::InventoryEntryData* a_entryData) {
     if (const auto a_owner = Utils::GetOwner(a_entryData)) {
         if (const auto a_fullnameform = a_owner->As<RE::TESFullName>()) {
             if (const auto a_name = a_fullnameform->GetFullName(); !Utils::is_empty(a_name)) {
@@ -40,7 +40,7 @@ std::string LoreBox::LoreGetters::GetLoreIO(const RE::InventoryEntryData* a_entr
     return "";
 }
 
-std::string LoreBox::LoreGetters::GetLoreSPBMGCK(RE::InventoryEntryData* a_entryData) {
+std::string LoreBox::GetLoreSPBMGCK(RE::InventoryEntryData* a_entryData) {
     #undef GetObject
     const auto a_obj = a_entryData->GetObject();
     if (const auto a_book = a_obj->As<RE::TESObjectBOOK>()) {
