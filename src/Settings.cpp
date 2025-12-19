@@ -7,10 +7,10 @@
 namespace {
     std::string ToString(const Settings::Modules a_module) {
         switch (a_module) {
-            case Settings::Modules::quantDTWQ:
-                return "quantDTWQ";
-            case Settings::Modules::quantDTIO:
-                return "quantDTIO";
+            case Settings::Modules::WhoseQuest:
+                return "WhoseQuest";
+            case Settings::Modules::WhoseItem:
+                return "WhoseItem";
             default:
                 return "Unknown";
         }
@@ -62,7 +62,7 @@ void SubMod::ClearLoreCache() {
 }
 
 SubMod::SubMod(const std::string& a_name, const SubModFeatures& a_features) : features(a_features) {
-    if (!SKSE::Translation::Translate("$" + a_name + "title", title)) {
+    if (!SKSE::Translation::Translate("$" + a_name + "Title", title)) {
         logger::error("Failed to translate title for sub-mod '{}'", a_name);
     }
     if (kw = Utils::MakeKeyword("LoreBox_" + a_name); !kw) {
@@ -80,6 +80,8 @@ void SubMod::Toggle(const bool a_enable) {
 RE::NiColor SubMod::GetColor() const { return features.titleColor; }
 
 void SubMod::ChangeColor(const RE::NiColor& a_color) { features.titleColor = a_color; }
+
+std::string SubMod::GetKeywordName() const { return kw->GetFormEditorID(); }
 
 void Settings::Load() {
     CSimpleIniA ini;
@@ -112,7 +114,8 @@ void Settings::Load() {
 
         features.getLore = LoreGetters::GetLoreGetter(module);
 
-        subMods.emplace(module, SubMod{moduleName, features});
+        auto a_name = "quantDT" + moduleName;
+        subMods.emplace(module, SubMod{a_name, features});
     }
 
     // Other
@@ -174,9 +177,9 @@ void Settings::Save() {
 
 LoreGetter Settings::LoreGetters::GetLoreGetter(Modules a_module) {
     switch (a_module) {
-        case Modules::quantDTWQ:
+        case Modules::WhoseQuest:
             return GetLoreWQ;
-        case Modules::quantDTIO:
+        case Modules::WhoseItem:
             return GetLoreIO;
         default:
             return {};
@@ -226,25 +229,16 @@ std::string Settings::LoreGetters::GetLoreIO(RE::InventoryEntryData* a_entryData
 const wchar_t* OnDynamicTranslationRequest(std::string_view a_key) {
     result_str.clear();
 
-    auto a_module = Settings::Modules::kTotal;
-    for (int i = 0; i < static_cast<int>(Settings::Modules::kTotal); ++i) {
-        const auto mod = static_cast<Settings::Modules>(i);
-        if (a_key == "LoreBox_" + ToString(static_cast<Settings::Modules>(i))) {
-            a_module = mod;
-            break;
-        }
-    }
-
-    if (a_module < Settings::Modules::kTotal) {
-        if (const auto subModIt = Settings::subMods.find(a_module); subModIt != Settings::subMods.end()) {
-            if (const auto lore = subModIt->second.GetLore(); !lore.empty()) {
+    for (auto& a_submod : Settings::subMods | std::views::values) {
+        if (a_key == a_submod.GetKeywordName()) {
+            if (const auto lore = a_submod.GetLore(); !lore.empty()) {
                 std::string title;
                 if (Settings::show_titles) {
-                    title = subModIt->second.GetTitle();
+                    title = a_submod.GetTitle();
                 }
                 if (!title.empty()) {
                     // add color to the title
-                    const auto packed = Utils::ConvertColor(subModIt->second.GetColor());
+                    const auto packed = Utils::ConvertColor(a_submod.GetColor());
                     const uint32_t r = packed & 0xFF;
                     const uint32_t g = (packed >> 8) & 0xFF;
                     const uint32_t b = (packed >> 16) & 0xFF;
@@ -257,7 +251,9 @@ const wchar_t* OnDynamicTranslationRequest(std::string_view a_key) {
                 }
                 result_str += Utils::utf8_to_wstring(lore);
             }
+            break;
         }
     }
+
     return result_str.c_str();
 }

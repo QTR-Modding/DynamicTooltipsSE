@@ -22,6 +22,7 @@ struct SubMod {
 
     RE::NiColor GetColor() const;
     void ChangeColor(const RE::NiColor& a_color);
+    std::string GetKeywordName() const;
 
 private:
     using LoreCache = std::unordered_set<RE::TESBoundObject*>;
@@ -41,8 +42,8 @@ namespace Settings {
     void Save();
 
     enum class Modules : uint8_t {
-        quantDTWQ = 0,
-        quantDTIO,
+        WhoseQuest = 0,
+        WhoseItem,
         kTotal
     };
 
