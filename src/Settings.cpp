@@ -78,10 +78,11 @@ void Settings::Save() {
         // Modules
         ini.SetBoolValue("Modules", ("b" + moduleName).c_str(), enabled);
         ini.SetLongValue("Modules", ("iColor" + moduleName).c_str(), Utils::ConvertColor(color));
-        // Other
-        ini.SetBoolValue("Other", "bShowTitles", show_titles);
-        ini.SetBoolValue("Other", "bDisallowEditorIDs", disallow_editorIDs);
     }
+
+    // Other
+    ini.SetBoolValue("Other", "bShowTitles", show_titles);
+    ini.SetBoolValue("Other", "bDisallowEditorIDs", disallow_editorIDs);
 
     const auto saveRC = ini.SaveFile(INI::path.c_str());
     if (saveRC < 0) {
