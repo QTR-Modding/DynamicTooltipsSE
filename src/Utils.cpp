@@ -29,8 +29,10 @@ RE::TESForm* Utils::GetOwner(const RE::InventoryEntryData* a_entryData) {
     if (a_entryData && a_entryData->extraLists) {
         for (const auto& xList : *a_entryData->extraLists) {
             if (const auto xOwner = xList->GetByType<RE::ExtraOwnership>()) {
-                owner = xOwner->owner;
-                break;
+                if (const auto a_owner = xOwner->owner) {
+                    owner = a_owner;
+                    break;
+                }
             }
         }
     }
@@ -66,20 +68,18 @@ RE::InventoryEntryData* Utils::GetSelectedEntryInMenu() {
     return nullptr;
 }
 
-uint32_t Utils::ConvertColor(const RE::NiColorA& a_color) {
+uint32_t Utils::ConvertColor(const RE::NiColor& a_color) {
     const uint8_t r = static_cast<uint8_t>(a_color.red * 255.0f);
     const uint8_t g = static_cast<uint8_t>(a_color.green * 255.0f);
     const uint8_t b = static_cast<uint8_t>(a_color.blue * 255.0f);
-    const uint8_t a = static_cast<uint8_t>(a_color.alpha * 255.0f);
-    return (a << 24) | (b << 16) | (g << 8) | r;
+    return (static_cast<uint32_t>(b) << 16) | (static_cast<uint32_t>(g) << 8) | static_cast<uint32_t>(r);
 }
 
-RE::NiColorA Utils::ConvertColor(const uint32_t a_color) {
+RE::NiColor Utils::ConvertColor(const uint32_t a_color) {
     const float r = static_cast<float>(a_color & 0xFF) / 255.0f;
     const float g = static_cast<float>((a_color >> 8) & 0xFF) / 255.0f;
     const float b = static_cast<float>((a_color >> 16) & 0xFF) / 255.0f;
-    const float a = static_cast<float>((a_color >> 24) & 0xFF) / 255.0f;
-    return RE::NiColorA(r, g, b, a);
+    return {r, g, b};
 }
 
 std::wstring Utils::utf8_to_wstring(const std::string_view s) {

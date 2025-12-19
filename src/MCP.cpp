@@ -3,17 +3,28 @@
 #include "SKSEMCP/SKSEMenuFramework.hpp"
 
 void MCP::RenderSettings() {
+    bool changed = false;
     for (auto& subMod : Settings::subMods | std::views::values) {
         bool enabled = static_cast<bool>(subMod);
         auto a_title = subMod.GetTitle();
         if (ImGuiMCP::Checkbox(a_title.data(), &enabled)) {
             subMod.Toggle(enabled);
+            changed = true;
         }
-        ImGuiMCP::SameLine();
-        RE::NiColorA a_color = subMod.GetColor();
-        if (ImGuiMCP::ColorEdit4((std::string(a_title) + "_color").c_str(), reinterpret_cast<float*>(&a_color), 0)) {
-            subMod.ChangeColor(a_color);
+        const auto a_color = subMod.GetColor();
+        float col[3] = {a_color.red, a_color.green, a_color.blue};
+        if (ImGuiMCP::ColorEdit3((std::string(a_title) + "_color").c_str(), col)) {
+            subMod.ChangeColor(RE::NiColor(col[0], col[1], col[2]));
+            changed = true;
         }
+
+        // disallow editor IDs setting
+        if (ImGuiMCP::Checkbox("Disallow Editor IDs in Tooltips", &Settings::disallow_editorIDs)) {
+            changed = true;
+        }
+    }
+    if (changed) {
+        Settings::Save();
     }
 }
 

@@ -15,6 +15,7 @@ RE::UI_MESSAGE_RESULTS Hooks::MenuHook<MenuType>::ProcessMessage_Hook(RE::UIMess
     }
 
     if (msg_type == 1) {
+        logger::info("Menu opened: {}", this->MENU_NAME);
         const RE::TESObjectREFR::InventoryItemMap player_inv = RE::PlayerCharacter::GetSingleton()->GetInventory();
         for (auto& a_sub : Settings::subMods | std::views::values) {
             a_sub.BuildLorePlayer(player_inv);

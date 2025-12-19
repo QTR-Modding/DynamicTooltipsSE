@@ -4,7 +4,7 @@ using LoreGetter = std::function<std::string(RE::InventoryEntryData*)>;
 
 struct SubModFeatures {
     bool enabled = true;
-    RE::NiColorA titleColor = RE::NiColorA(0.8f, 0.8f, 0.2f, 1.0f);
+    RE::NiColor titleColor = RE::NiColor(0.8f, 0.8f, 0.2f);
     LoreGetter getLore;
 };
 
@@ -23,13 +23,13 @@ struct SubMod {
     explicit operator bool() const { return features.enabled; }
     void Toggle(bool a_enable);
 
-    RE::NiColorA GetColor() const;
-    void ChangeColor(const RE::NiColorA& a_color);
+    RE::NiColor GetColor() const;
+    void ChangeColor(const RE::NiColor& a_color);
+    void Clear();
 
 private:
     using LoreCache = std::unordered_map<RE::TESBoundObject*, std::string>;
     void BuildLore(const RE::TESObjectREFR::InventoryItemMap& a_inv, LoreCache& a_cache) const;
-    void Clear();
     LoreCache loreCachePlayer;
     LoreCache loreCacheContainer;
     RE::BGSKeyword* kw;
@@ -40,8 +40,10 @@ private:
 
 namespace Settings {
     inline std::string mod_name = "Dynamic Tooltips";
+    inline bool disallow_editorIDs = false;
 
     void Load();
+    void Save();
 
     enum class Modules : uint8_t {
         LoreBox_quantDTWQ = 0,
