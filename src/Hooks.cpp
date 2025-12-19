@@ -1,5 +1,4 @@
 #include "Hooks.h"
-
 #include "Settings.h"
 
 void Hooks::Install() {
@@ -15,19 +14,22 @@ RE::UI_MESSAGE_RESULTS Hooks::MenuHook<MenuType>::ProcessMessage_Hook(RE::UIMess
     }
 
     if (msg_type == 1) {
-        logger::info("Menu opened: {}", this->MENU_NAME);
         const RE::TESObjectREFR::InventoryItemMap player_inv = RE::PlayerCharacter::GetSingleton()->GetInventory();
         for (auto& a_sub : Settings::subMods | std::views::values) {
-            a_sub.BuildLorePlayer(player_inv);
+            a_sub.BuildLoreCache(player_inv);
         }
 
         if (this->MENU_NAME == RE::ContainerMenu::MENU_NAME) {
             if (RE::TESObjectREFRPtr refr; LookupReferenceByHandle(RE::ContainerMenu::GetTargetRefHandle(), refr)) {
                 const auto ref_inv = refr->GetInventory();
                 for (auto& a_sub : Settings::subMods | std::views::values) {
-                    a_sub.BuildLoreContainer(ref_inv);
+                    a_sub.BuildLoreCache(ref_inv);
                 }
             }
+        }
+    } else {
+        for (auto& a_sub : Settings::subMods | std::views::values) {
+            a_sub.ClearLoreCache();
         }
     }
 
