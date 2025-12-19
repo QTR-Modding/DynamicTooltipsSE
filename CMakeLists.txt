@@ -14,9 +14,9 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 # If you use CMake features from higher versions, update this to match.
 cmake_minimum_required(VERSION 3.21)
 # Set your project name. This will be the name of your SKSE .dll file.
-set(AUTHOR_NAME "AUTHORNAME")
-set(PRODUCT_NAME "ModName")
-project(${PRODUCT_NAME} VERSION 0.1.0.0 LANGUAGES CXX)
+set(AUTHOR_NAME "Quantumyilmaz")
+set(PRODUCT_NAME "DynamicTooltipsSE")
+project(${PRODUCT_NAME} VERSION 1.0.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
@@ -35,9 +35,7 @@ add_custom_command(
     DEPENDS ${RESOURCE_FILE}
 )
 
-# Add a custom target to ensure the resource file is generated
 add_custom_target(Resource ALL DEPENDS ${RESOURCE_OUTPUT})
-include(FetchContent)
 
 set(ENABLE_SKYRIM_SE ON CACHE BOOL " " FORCE)
 set(ENABLE_SKYRIM_AE ON CACHE BOOL " " FORCE)
