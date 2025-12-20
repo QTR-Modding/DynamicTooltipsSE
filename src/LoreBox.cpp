@@ -15,39 +15,39 @@ namespace {
         const auto perkId = castingPerk->GetFormID();
         switch (perkId) {
             // Novice perks
-            case 0x000F2CA1: // Novice Alteration
-            case 0x000F2CA2: // Novice Conjuration
-            case 0x000F2CA3: // Novice Illusion
-            case 0x000F2CA5: // Novice Restoration
-            case 0x000F2CA6: // Novice Destruction
+            case 0x000F2CA6: // Novice Alteration
+            case 0x000F2CA7: // Novice Conjuration
+            case 0x000F2CA8: // Novice Destruction
+            case 0x000F2CA9: // Novice Illusion
+            case 0x000F2CAA: // Novice Restoration
                 return "Novice";
             // Apprentice perks
             case 0x000C44B7: // Apprentice Alteration
             case 0x000C44BB: // Apprentice Conjuration
+            case 0x000C44BF: // Apprentice Destruction
             case 0x000C44C3: // Apprentice Illusion
             case 0x000C44C7: // Apprentice Restoration
-            case 0x000C44BF: // Apprentice Destruction
                 return "Apprentice";
             // Adept perks
             case 0x000C44B8: // Adept Alteration
             case 0x000C44BC: // Adept Conjuration
+            case 0x000C44C0: // Adept Destruction
             case 0x000C44C4: // Adept Illusion
             case 0x000C44C8: // Adept Restoration
-            case 0x000C44C0: // Adept Destruction
                 return "Adept";
             // Expert perks
             case 0x000C44B9: // Expert Alteration
             case 0x000C44BD: // Expert Conjuration
+            case 0x000C44C1: // Expert Destruction
             case 0x000C44C5: // Expert Illusion
             case 0x000C44C9: // Expert Restoration
-            case 0x000C44C1: // Expert Destruction
                 return "Expert";
             // Master perks
             case 0x000C44BA: // Master Alteration
             case 0x000C44BE: // Master Conjuration
+            case 0x000C44C2: // Master Destruction
             case 0x000C44C6: // Master Illusion
             case 0x000C44CA: // Master Restoration
-            case 0x000C44C2: // Master Destruction
                 return "Master";
             default:
                 return "";
