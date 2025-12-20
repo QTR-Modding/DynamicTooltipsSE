@@ -106,11 +106,12 @@ std::string LoreBox::GetLoreSPBMGCK(RE::InventoryEntryData* a_entryData) {
     const auto player = RE::PlayerCharacter::GetSingleton();
 
     const float a_cost = a_spell->CalculateMagickaCost(player);
-    auto costText = fmt::format("{:.0f} Magicka", a_cost);
+    auto costText = fmt::format("{:.0f}", a_cost);
     const float maxMagicka = player->GetActorValueMax(RE::ActorValue::kMagicka);
     if (a_cost > maxMagicka) {
         costText = fmt::format("<font color=\"{}\">{}</font>", Utils::kUnaffordableMagickaHtmlColor, costText);
     }
+    costText = fmt::format("{} Magicka", costText);
 
     std::string levelText;
     if (Settings::show_spell_levels) {
