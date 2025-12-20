@@ -2,21 +2,27 @@
 #include "Settings.h"
 #include "Modules.h"
 #include "SKSEMCP/SKSEMenuFramework.hpp"
+#include "imgui.h"
 
 void MCP::RenderSettings() {
     bool changed = false;
-    for (auto& subMod : Modules::modules | std::views::values) {
-        bool enabled = static_cast<bool>(subMod);
+    for (auto& [moduleId, subMod] : Modules::modules) {
+        const auto moduleName = Modules::ToString(moduleId);
         auto a_title = subMod.GetTitle();
-        if (ImGuiMCP::Checkbox(a_title.data(), &enabled)) {
-            subMod.Toggle(enabled);
-            changed = true;
-        }
-        const auto a_color = subMod.GetColor();
-        float col[3] = {a_color.red, a_color.green, a_color.blue};
-        if (ImGuiMCP::ColorEdit3((std::string(a_title) + "_color").c_str(), col)) {
-            subMod.ChangeColor(RE::NiColor(col[0], col[1], col[2]));
-            changed = true;
+        if (ImGui::CollapsingHeader(a_title.data())) {
+            bool enabled = static_cast<bool>(subMod);
+            const auto enabledLabel = std::string("Enabled##") + moduleName;
+            if (ImGuiMCP::Checkbox(enabledLabel.c_str(), &enabled)) {
+                subMod.Toggle(enabled);
+                changed = true;
+            }
+            const auto a_color = subMod.GetColor();
+            float col[3] = {a_color.red, a_color.green, a_color.blue};
+            const auto colorLabel = std::string("Title Color##") + moduleName;
+            if (ImGuiMCP::ColorEdit3(colorLabel.c_str(), col)) {
+                subMod.ChangeColor(RE::NiColor(col[0], col[1], col[2]));
+                changed = true;
+            }
         }
     }
     if (ImGuiMCP::Checkbox("Show Titles in Tooltips", &Settings::show_titles)) {
