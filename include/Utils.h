@@ -9,4 +9,5 @@ namespace Utils {
     RE::NiColor ConvertColor(uint32_t a_color);
     inline bool is_empty(const char* s) { return s == nullptr || s[0] == '\0'; }
     std::wstring utf8_to_wstring(std::string_view s);
+    inline constexpr auto kUnaffordableMagickaHtmlColor = "#FFC8C8";
 }
