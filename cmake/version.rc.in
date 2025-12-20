@@ -23,6 +23,7 @@ BEGIN
 			VALUE "InternalName", "@PROJECT_NAME@"
 			VALUE "ProductName", "@PROJECT_NAME@"
 			VALUE "ProductVersion",  "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
+			VALUE "LegalCopyright", "All Rights Reserved Quantumyilmaz"
 		END
 	END
 	BLOCK "VarFileInfo"
