@@ -41,6 +41,7 @@ void Settings::Load() {
     // Other
     show_titles = ini.GetBoolValue("Other", "bShowTitles", show_titles);
     disallow_editorIDs = ini.GetBoolValue("Other", "bDisallowEditorIDs", disallow_editorIDs);
+    show_spell_levels = ini.GetBoolValue("Other", "bShowSpellLevels", show_spell_levels);
 
     if (loadRC < 0) {
         Save();
@@ -83,6 +84,7 @@ void Settings::Save() {
     // Other
     ini.SetBoolValue("Other", "bShowTitles", show_titles);
     ini.SetBoolValue("Other", "bDisallowEditorIDs", disallow_editorIDs);
+    ini.SetBoolValue("Other", "bShowSpellLevels", show_spell_levels);
 
     const auto saveRC = ini.SaveFile(INI::path.c_str());
     if (saveRC < 0) {

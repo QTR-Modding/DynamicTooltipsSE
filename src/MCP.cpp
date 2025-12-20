@@ -25,6 +25,9 @@ void MCP::RenderSettings() {
     if (ImGuiMCP::Checkbox("Disallow Editor IDs in Tooltips", &Settings::disallow_editorIDs)) {
         changed = true;
     }
+    if (ImGuiMCP::Checkbox("Show Spell Levels in Tooltips", &Settings::show_spell_levels)) {
+        changed = true;
+    }
     if (changed) {
         Settings::Save();
     }

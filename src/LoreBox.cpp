@@ -61,24 +61,26 @@ std::string LoreBox::GetLoreSPBMGCK(RE::InventoryEntryData* a_entryData) {
     }
 
     std::string levelText;
-    switch (a_spell->GetSpellLevel()) {
-        case RE::MagicSystem::SpellLevel::kNovice:
-            levelText = "Novice";
-            break;
-        case RE::MagicSystem::SpellLevel::kApprentice:
-            levelText = "Apprentice";
-            break;
-        case RE::MagicSystem::SpellLevel::kAdept:
-            levelText = "Adept";
-            break;
-        case RE::MagicSystem::SpellLevel::kExpert:
-            levelText = "Expert";
-            break;
-        case RE::MagicSystem::SpellLevel::kMaster:
-            levelText = "Master";
-            break;
-        default:
-            break;
+    if (Settings::show_spell_levels) {
+        switch (a_spell->GetSpellLevel()) {
+            case RE::MagicSystem::SpellLevel::kNovice:
+                levelText = "Novice";
+                break;
+            case RE::MagicSystem::SpellLevel::kApprentice:
+                levelText = "Apprentice";
+                break;
+            case RE::MagicSystem::SpellLevel::kAdept:
+                levelText = "Adept";
+                break;
+            case RE::MagicSystem::SpellLevel::kExpert:
+                levelText = "Expert";
+                break;
+            case RE::MagicSystem::SpellLevel::kMaster:
+                levelText = "Master";
+                break;
+            default:
+                break;
+        }
     }
 
     if (!levelText.empty()) {
