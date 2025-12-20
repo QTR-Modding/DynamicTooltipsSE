@@ -2,14 +2,13 @@
 #include "Settings.h"
 #include "Modules.h"
 #include "SKSEMCP/SKSEMenuFramework.hpp"
-#include "imgui.h"
 
 void MCP::RenderSettings() {
     bool changed = false;
     for (auto& [moduleId, subMod] : Modules::modules) {
         const auto moduleName = Modules::ToString(moduleId);
         auto a_title = subMod.GetTitle();
-        if (ImGui::CollapsingHeader(a_title.data())) {
+        if (ImGuiMCP::CollapsingHeader(a_title.data())) {
             bool enabled = static_cast<bool>(subMod);
             const auto enabledLabel = std::string("Enabled##") + moduleName;
             if (ImGuiMCP::Checkbox(enabledLabel.c_str(), &enabled)) {
