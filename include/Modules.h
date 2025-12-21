@@ -35,7 +35,7 @@ private:
 };
 
 namespace Modules {
-    enum class Modules : uint8_t { WhoseQuest = 0, WhoseItem, SPBMGCK, kTotal };
+    enum class Modules : uint8_t { WhoseQuest = 0, WhoseItem, SPBMGCK, WhichMods, kTotal };
 
     inline std::string ToString(const Modules a_module) {
         switch (a_module) {
@@ -45,6 +45,8 @@ namespace Modules {
                 return "WhoseItem";
             case Modules::SPBMGCK:
                 return "SPBMGCK";
+            case Modules::WhichMods:
+                return "WhichMods";
             default:
                 return "Unknown";
         }
@@ -58,6 +60,8 @@ namespace Modules {
                 return LoreBox::GetLoreIO;
             case Modules::SPBMGCK:
                 return LoreBox::GetLoreSPBMGCK;
+            case Modules::WhichMods:
+
             default:
                 return {};
         }

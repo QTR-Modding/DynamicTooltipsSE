@@ -4,7 +4,7 @@
 #include "SKSEMCP/SKSEMenuFramework.hpp"
 
 namespace {
-    const char* GetModuleDescription(Modules::Modules a_id) {
+    const char* GetModuleDescription(const Modules::Modules a_id) {
         switch (a_id) {
             case Modules::Modules::WhoseQuest:
                 return "Shows which quest a quest item belongs to.";
@@ -13,6 +13,8 @@ namespace {
             case Modules::Modules::SPBMGCK:
                 return "Shows spell tome info such as spell level and magicka cost.\n"
                     "If the cost exceeds your max magicka, the number is tinted pink-ish.";
+            case Modules::Modules::WhichMods:
+                return "Shows which mods own/edit an item.";
             default:
                 return "";
         }
@@ -44,6 +46,16 @@ void MCP::RenderSettings() {
             if (ImGuiMCP::Checkbox(enabledLabel.c_str(), &enabled)) {
                 subMod.Toggle(enabled);
                 changed = true;
+            }
+
+            // if its the Which Mods module, show max mod names setting as int slider / SliderInt
+            if (moduleId == Modules::Modules::WhichMods) {
+                int maxNames = Settings::max_mod_names;
+                if (ImGuiMCP::SliderInt("Max Mod Names##WhichMods", &maxNames, 1, 25)) {
+                    Settings::max_mod_names = maxNames;
+                    changed = true;
+                }
+                ImGuiMCP::Text("Sets the maximum number of mod names to show in tooltips.");
             }
 
             const auto a_color = subMod.GetColor();
