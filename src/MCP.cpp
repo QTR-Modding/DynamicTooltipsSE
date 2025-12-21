@@ -4,7 +4,7 @@
 #include "SKSEMCP/SKSEMenuFramework.hpp"
 
 namespace {
-    const char* GetModuleDescription(Modules::Modules a_id) {
+    const char* GetModuleDescription(const Modules::Modules a_id) {
         switch (a_id) {
             case Modules::Modules::WhoseQuest:
                 return "Shows which quest a quest item belongs to.";
@@ -13,6 +13,8 @@ namespace {
             case Modules::Modules::SPBMGCK:
                 return "Shows spell tome info such as spell level and magicka cost.\n"
                     "If the cost exceeds your max magicka, the number is tinted pink-ish.";
+            case Modules::Modules::WhichMods:
+                return "Shows which mods own/edit an item.";
             default:
                 return "";
         }
@@ -39,11 +41,30 @@ void MCP::RenderSettings() {
         if (ImGuiMCP::CollapsingHeader(title.data())) {
             DrawCategoryDescription(GetModuleDescription(moduleId));
 
-            bool enabled = static_cast<bool>(subMod);
+            bool enabled = subMod.IsEnabled();
             const auto enabledLabel = std::string("Enabled##") + moduleName;
             if (ImGuiMCP::Checkbox(enabledLabel.c_str(), &enabled)) {
                 subMod.Toggle(enabled);
                 changed = true;
+            }
+
+            // if its the Which Mods module, show max mod names setting as int slider / SliderInt
+            if (moduleId == Modules::Modules::WhichMods) {
+                int maxNames = Settings::max_mod_names;
+                if (ImGuiMCP::SliderInt("Max Mod Names##WhichMods", &maxNames, 1, 25)) {
+                    Settings::max_mod_names = maxNames;
+                    changed = true;
+                }
+                ImGuiMCP::Text("Sets the maximum number of mod names to show in tooltips.");
+            }
+            // move the spell level setting here
+            if (moduleId == Modules::Modules::SPBMGCK) {
+                bool showLevels = Settings::show_spell_levels;
+                if (ImGuiMCP::Checkbox("Show Spell Levels in Tooltips##SPBMGCK", &showLevels)) {
+                    Settings::show_spell_levels = showLevels;
+                    changed = true;
+                }
+                ImGuiMCP::Text("Adds Novice/Apprentice/Adept/Expert/Master when available.");
             }
 
             const auto a_color = subMod.GetColor();
@@ -69,11 +90,6 @@ void MCP::RenderSettings() {
             changed = true;
         }
         ImGuiMCP::Text("Prevents fallback to editor IDs when a display name is missing.");
-
-        if (ImGuiMCP::Checkbox("Show Spell Levels in Tooltips", &Settings::show_spell_levels)) {
-            changed = true;
-        }
-        ImGuiMCP::Text("Adds Novice/Apprentice/Adept/Expert/Master when available.");
     }
 
     if (changed) {

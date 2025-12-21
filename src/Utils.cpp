@@ -53,6 +53,18 @@ RE::TESForm* Utils::GetOwner(const RE::InventoryEntryData* a_entryData) {
     return owner;
 }
 
+std::vector<RE::TESFile*> Utils::GetOwningMods(const RE::InventoryEntryData* a_entryData) {
+    std::vector<RE::TESFile*> mods;
+    #undef GetObject
+    const auto a_obj = a_entryData->GetObject();
+    if (const auto a_mods = a_obj->sourceFiles.array) {
+        for (const auto& mod : *a_mods) {
+            if (mod) mods.push_back(mod);
+        }
+    }
+    return mods;
+}
+
 RE::InventoryEntryData* Utils::GetSelectedEntryInMenu() {
     if (const auto a_item = GetSelectedEntryInMenuHelper<RE::InventoryMenu>()) {
         return a_item;

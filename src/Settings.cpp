@@ -42,6 +42,7 @@ void Settings::Load() {
     show_titles = ini.GetBoolValue("Other", "bShowTitles", show_titles);
     disallow_editorIDs = ini.GetBoolValue("Other", "bDisallowEditorIDs", disallow_editorIDs);
     show_spell_levels = ini.GetBoolValue("Other", "bShowSpellLevels", show_spell_levels);
+    max_mod_names = ini.GetLongValue("Other", "iMaxModNames", max_mod_names);
 
     if (loadRC < 0) {
         Save();
@@ -72,7 +73,7 @@ void Settings::Save() {
         RE::NiColor color(0.8f, 0.8f, 0.2f);
 
         if (auto it = Modules::modules.find(module); it != Modules::modules.end()) {
-            enabled = static_cast<bool>(it->second);
+            enabled = it->second.IsEnabled();
             color = it->second.GetColor();
         }
 
@@ -85,6 +86,7 @@ void Settings::Save() {
     ini.SetBoolValue("Other", "bShowTitles", show_titles);
     ini.SetBoolValue("Other", "bDisallowEditorIDs", disallow_editorIDs);
     ini.SetBoolValue("Other", "bShowSpellLevels", show_spell_levels);
+    ini.SetLongValue("Other", "iMaxModNames", max_mod_names);
 
     const auto saveRC = ini.SaveFile(INI::path.c_str());
     if (saveRC < 0) {

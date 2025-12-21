@@ -12,8 +12,7 @@ namespace {
         if (!castingPerk) {
             return "";
         }
-        const auto perkId = castingPerk->GetFormID();
-        switch (perkId) {
+        switch (castingPerk->GetFormID()) {
             // Novice perks
             case 0x000F2CA6: // Novice Alteration
             case 0x000F2CA7: // Novice Conjuration
@@ -122,4 +121,56 @@ std::string LoreBox::GetLoreSPBMGCK(RE::InventoryEntryData* a_entryData) {
         return fmt::format("{} | {}", levelText, costText);
     }
     return costText;
+}
+
+std::string LoreBox::GetLoreWhichMods(const RE::InventoryEntryData* a_entryData) {
+    if (a_entryData->object->IsDynamicForm()) {
+        return "Dynamic Form";
+    }
+    const auto owners = Utils::GetOwningMods(a_entryData);
+    if (owners.empty()) {
+        return {};
+    }
+
+    const std::size_t ownerCount = owners.size();
+    const std::size_t maxNames = (Settings::max_mod_names > 0) ? static_cast<std::size_t>(Settings::max_mod_names) : 0;
+
+    if (maxNames == 0) {
+        return {}; // or decide on an alternative policy
+    }
+
+    std::string result;
+
+    if (const bool truncated = ownerCount > maxNames; !truncated) {
+        // show all
+        for (std::size_t i = 0; i < ownerCount; ++i) {
+            if (i > 0) {
+                result += "\n";
+            }
+            result += owners[i]->fileName;
+        }
+        return result;
+    }
+
+    // truncated: show first (maxNames-1), then "...", then last
+    if (maxNames == 1) {
+        // only show the last (plus ellipsis)
+        result += "...";
+        result += "\n";
+        result += owners.back()->fileName;
+        return result;
+    }
+
+    for (std::size_t i = 0; i < maxNames - 1; ++i) {
+        if (i > 0) {
+            result += "\n";
+        }
+        result += owners[i]->fileName;
+    }
+
+    result += "\n...";
+    result += "\n";
+    result += owners.back()->fileName;
+
+    return result;
 }

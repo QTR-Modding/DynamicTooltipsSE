@@ -8,6 +8,7 @@ const wchar_t* OnDynamicTranslationRequest(std::string_view a_key) {
     DTF::result_str.clear();
 
     for (auto& a_submod : Modules::modules | std::views::values) {
+        if (!a_submod.IsEnabled()) continue;
         if (a_key == a_submod.GetKeywordName()) {
             if (const auto lore = a_submod.GetLore(); !lore.empty()) {
                 std::string title;
