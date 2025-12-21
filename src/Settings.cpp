@@ -72,7 +72,7 @@ void Settings::Save() {
         RE::NiColor color(0.8f, 0.8f, 0.2f);
 
         if (auto it = Modules::modules.find(module); it != Modules::modules.end()) {
-            enabled = static_cast<bool>(it->second);
+            enabled = it->second.IsEnabled();
             color = it->second.GetColor();
         }
 

@@ -41,7 +41,7 @@ void MCP::RenderSettings() {
         if (ImGuiMCP::CollapsingHeader(title.data())) {
             DrawCategoryDescription(GetModuleDescription(moduleId));
 
-            bool enabled = static_cast<bool>(subMod);
+            bool enabled = subMod.IsEnabled();
             const auto enabledLabel = std::string("Enabled##") + moduleName;
             if (ImGuiMCP::Checkbox(enabledLabel.c_str(), &enabled)) {
                 subMod.Toggle(enabled);

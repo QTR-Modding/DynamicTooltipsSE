@@ -5,9 +5,9 @@
 using LoreGetter = std::function<std::string(RE::InventoryEntryData*)>;
 
 struct ModuleFeatures {
-    bool enabled = true;
     RE::NiColor titleColor = RE::NiColor(67.f / 255.f, 222.f / 255.f, 16.f / 255.f);
     LoreGetter getLore;
+    bool enabled = true;
 };
 
 struct Module {
@@ -19,7 +19,7 @@ struct Module {
 
     explicit Module(const std::string& a_name, const ModuleFeatures& a_features);
 
-    explicit operator bool() const { return features.enabled; }
+    bool IsEnabled() const { return features.enabled; }
     void Toggle(bool a_enable);
 
     RE::NiColor GetColor() const;
@@ -61,7 +61,7 @@ namespace Modules {
             case Modules::SPBMGCK:
                 return LoreBox::GetLoreSPBMGCK;
             case Modules::WhichMods:
-
+                return LoreBox::GetLoreWhichMods;
             default:
                 return {};
         }

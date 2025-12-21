@@ -1,6 +1,4 @@
 #include "LoreBox.h"
-
-#include <utility>
 #include "Settings.h"
 #include "Utils.h"
 #include "ClibUtil/editorID.hpp"
@@ -14,8 +12,7 @@ namespace {
         if (!castingPerk) {
             return "";
         }
-        const auto perkId = castingPerk->GetFormID();
-        switch (perkId) {
+        switch (castingPerk->GetFormID()) {
             // Novice perks
             case 0x000F2CA6: // Novice Alteration
             case 0x000F2CA7: // Novice Conjuration
