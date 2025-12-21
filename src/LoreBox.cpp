@@ -124,6 +124,9 @@ std::string LoreBox::GetLoreSPBMGCK(RE::InventoryEntryData* a_entryData) {
 }
 
 std::string LoreBox::GetLoreWhichMods(const RE::InventoryEntryData* a_entryData) {
+    if (a_entryData->object->IsDynamicForm()) {
+        return "Dynamic Form";
+    }
     const auto owners = Utils::GetOwningMods(a_entryData);
     if (owners.empty()) {
         return {};
