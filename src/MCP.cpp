@@ -57,6 +57,15 @@ void MCP::RenderSettings() {
                 }
                 ImGuiMCP::Text("Sets the maximum number of mod names to show in tooltips.");
             }
+            // move the spell level setting here
+            if (moduleId == Modules::Modules::SPBMGCK) {
+                bool showLevels = Settings::show_spell_levels;
+                if (ImGuiMCP::Checkbox("Show Spell Levels in Tooltips##SPBMGCK", &showLevels)) {
+                    Settings::show_spell_levels = showLevels;
+                    changed = true;
+                }
+                ImGuiMCP::Text("Adds Novice/Apprentice/Adept/Expert/Master when available.");
+            }
 
             const auto a_color = subMod.GetColor();
             float col[3] = {a_color.red, a_color.green, a_color.blue};
@@ -81,11 +90,6 @@ void MCP::RenderSettings() {
             changed = true;
         }
         ImGuiMCP::Text("Prevents fallback to editor IDs when a display name is missing.");
-
-        if (ImGuiMCP::Checkbox("Show Spell Levels in Tooltips", &Settings::show_spell_levels)) {
-            changed = true;
-        }
-        ImGuiMCP::Text("Adds Novice/Apprentice/Adept/Expert/Master when available.");
     }
 
     if (changed) {
