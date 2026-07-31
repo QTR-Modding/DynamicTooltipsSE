@@ -65,6 +65,29 @@ std::vector<RE::TESFile*> Utils::GetOwningMods(const RE::InventoryEntryData* a_e
     return mods;
 }
 
+RE::TESBoundObject* Utils::GetSelectedCraftingObject() {
+    const auto menu = RE::UI::GetSingleton()->GetMenu<RE::CraftingMenu>();
+    if (!menu) {
+        return nullptr;
+    }
+
+    const auto subMenu = menu->GetCraftingSubMenu();
+    if (const auto constructibleMenu =
+            skyrim_cast<RE::CraftingSubMenus::ConstructibleObjectMenu*>(subMenu)) {
+        if (constructibleMenu->currentIndex >= constructibleMenu->recipes.size()) {
+            return nullptr;
+        }
+
+        const auto constructibleObject =
+            constructibleMenu->recipes[constructibleMenu->currentIndex].constructibleObject;
+        return constructibleObject && constructibleObject->createdItem ?
+                   constructibleObject->createdItem->As<RE::TESBoundObject>() :
+                   nullptr;
+    }
+
+    return nullptr;
+}
+
 RE::InventoryEntryData* Utils::GetSelectedEntryInMenu() {
     if (const auto a_item = GetSelectedEntryInMenuHelper<RE::InventoryMenu>()) {
         return a_item;

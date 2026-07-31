@@ -13,6 +13,7 @@ struct ModuleFeatures {
 struct Module {
     std::string_view GetTitle() const { return title; }
     std::string GetLore() const;
+    void BuildLoreCache(RE::TESBoundObject* a_obj);
     void BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv);
     void BuildLoreCache(const RE::ItemList* a_itemList);
     void ClearLoreCache();
