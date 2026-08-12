@@ -73,16 +73,16 @@ RE::TESBoundObject* Utils::GetSelectedCraftingObject() {
 
     const auto subMenu = menu->GetCraftingSubMenu();
     if (const auto constructibleMenu =
-            skyrim_cast<RE::CraftingSubMenus::ConstructibleObjectMenu*>(subMenu)) {
+        skyrim_cast<RE::CraftingSubMenus::ConstructibleObjectMenu*>(subMenu)) {
         if (constructibleMenu->currentIndex >= constructibleMenu->recipes.size()) {
             return nullptr;
         }
 
         const auto constructibleObject =
             constructibleMenu->recipes[constructibleMenu->currentIndex].constructibleObject;
-        return constructibleObject && constructibleObject->createdItem ?
-                   constructibleObject->createdItem->As<RE::TESBoundObject>() :
-                   nullptr;
+        return constructibleObject && constructibleObject->createdItem
+                   ? constructibleObject->createdItem->As<RE::TESBoundObject>()
+                   : nullptr;
     }
 
     return nullptr;

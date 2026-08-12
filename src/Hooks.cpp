@@ -30,9 +30,9 @@ namespace {
         for (const auto constructibleObject : dataHandler->GetFormArray<RE::BGSConstructibleObject>()) {
             if (constructibleObject && constructibleObject->CanBeCreatedOnWorkbench(furniture, false)) {
                 module->second.BuildLoreCache(
-                    constructibleObject->createdItem ?
-                        constructibleObject->createdItem->As<RE::TESBoundObject>() :
-                        nullptr);
+                    constructibleObject->createdItem
+                        ? constructibleObject->createdItem->As<RE::TESBoundObject>()
+                        : nullptr);
             }
         }
     }
