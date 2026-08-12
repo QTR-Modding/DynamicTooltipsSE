@@ -1,15 +1,65 @@
 #include "Hooks.h"
 #include "Modules.h"
 
+namespace {
+    void BuildCraftingLoreCache(RE::CraftingMenu* a_menu) {
+        const auto module = Modules::modules.find(Modules::Modules::WhichMods);
+        if (module == Modules::modules.end() || !module->second.IsEnabled()) {
+            return;
+        }
+
+        RE::TESFurniture* furniture = nullptr;
+        if (const auto player = RE::PlayerCharacter::GetSingleton()) {
+            if (const auto furnitureRef = player->GetOccupiedFurniture().get();
+                furnitureRef && furnitureRef->GetBaseObject()) {
+                furniture = furnitureRef->GetBaseObject()->As<RE::TESFurniture>();
+            }
+        }
+        if (!furniture && a_menu) {
+            if (const auto subMenu = a_menu->GetCraftingSubMenu()) {
+                furniture = subMenu->furniture;
+            }
+        }
+        const auto dataHandler = RE::TESDataHandler::GetSingleton();
+        if (!furniture ||
+            furniture->workBenchData.benchType != RE::TESFurniture::WorkBenchData::BenchType::kCreateObject ||
+            !dataHandler) {
+            return;
+        }
+
+        for (const auto constructibleObject : dataHandler->GetFormArray<RE::BGSConstructibleObject>()) {
+            if (constructibleObject && constructibleObject->CanBeCreatedOnWorkbench(furniture, false)) {
+                module->second.BuildLoreCache(
+                    constructibleObject->createdItem
+                        ? constructibleObject->createdItem->As<RE::TESBoundObject>()
+                        : nullptr);
+            }
+        }
+    }
+}
+
 void Hooks::Install() {
     MenuHook<RE::ContainerMenu>::InstallHook();
     MenuHook<RE::InventoryMenu>::InstallHook();
     MenuHook<RE::BarterMenu>::InstallHook();
+    MenuHook<RE::CraftingMenu>::InstallHook();
 }
 
 template <typename MenuType>
 RE::UI_MESSAGE_RESULTS Hooks::MenuHook<MenuType>::ProcessMessage_Hook(RE::UIMessage& a_message) {
     const auto msg_type = static_cast<int>(a_message.type.get());
+    if constexpr (std::is_same_v<MenuType, RE::CraftingMenu>) {
+        if (msg_type == 1) {
+            BuildCraftingLoreCache(this);
+        } else if (msg_type == 3) {
+            update_on_next = false;
+            for (auto& a_sub : Modules::modules | std::views::values) {
+                a_sub.ClearLoreCache();
+            }
+        }
+        return _ProcessMessage(this, a_message);
+    }
+
     if (msg_type == 1) {
         const RE::TESObjectREFR::InventoryItemMap player_inv = RE::PlayerCharacter::GetSingleton()->GetInventory();
         for (auto& a_sub : Modules::modules | std::views::values) {

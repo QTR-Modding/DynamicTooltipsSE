@@ -6,27 +6,36 @@ std::string Module::GetLore() const {
     if (const auto a_entry = Utils::GetSelectedEntryInMenu()) {
         return features.getLore(a_entry);
     }
+    if (const auto a_obj = Utils::GetSelectedCraftingObject()) {
+        RE::InventoryEntryData craftingEntry(a_obj, 1);
+        return features.getLore(&craftingEntry);
+    }
     return "";
+}
+
+void Module::BuildLoreCache(RE::TESBoundObject* a_obj) {
+    if (!a_obj || !a_obj->GetPlayable() || a_obj->Is(RE::FormType::LeveledItem)) {
+        return;
+    }
+
+    RE::BGSKeywordForm* a_kw_form;
+    if (const auto ammo = a_obj->As<RE::TESAmmo>()) {
+        a_kw_form = ammo->AsKeywordForm();
+    } else {
+        a_kw_form = a_obj->As<RE::BGSKeywordForm>();
+    }
+    if (!a_kw_form || loreCache.contains(a_obj)) {
+        return;
+    }
+
+    a_kw_form->AddKeyword(kw);
+    loreCache.insert(a_obj);
 }
 
 void Module::BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv) {
     for (const auto& [obj, entry] : a_inv) {
-        if (entry.first <= 0 || !obj->GetPlayable() || obj->Is(RE::FormType::LeveledItem)) {
-            continue;
-        }
-        RE::BGSKeywordForm* a_kw_form;
-        if (const auto ammo = obj->As<RE::TESAmmo>()) {
-            a_kw_form = ammo->AsKeywordForm();
-        } else {
-            a_kw_form = obj->As<RE::BGSKeywordForm>();
-        }
-        if (!a_kw_form) {
-            continue;
-        }
-
-        if (!loreCache.contains(obj)) {
-            a_kw_form->AddKeyword(kw);
-            loreCache.insert(obj);
+        if (entry.first > 0) {
+            BuildLoreCache(obj);
         }
     }
 }
@@ -39,22 +48,7 @@ void Module::BuildLoreCache(const RE::ItemList* a_itemList) {
     for (const auto& item : a_itemList->items) {
         #undef GetObject
         const auto obj = item->data.objDesc->GetObject();
-        if (!obj || !obj->GetPlayable() || obj->Is(RE::FormType::LeveledItem)) {
-            continue;
-        }
-        RE::BGSKeywordForm* a_kw_form;
-        if (const auto ammo = obj->As<RE::TESAmmo>()) {
-            a_kw_form = ammo->AsKeywordForm();
-        } else {
-            a_kw_form = obj->As<RE::BGSKeywordForm>();
-        }
-        if (!a_kw_form) {
-            continue;
-        }
-        if (!loreCache.contains(obj)) {
-            a_kw_form->AddKeyword(kw);
-            loreCache.insert(obj);
-        }
+        BuildLoreCache(obj);
     }
 }
 

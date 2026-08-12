@@ -5,6 +5,7 @@ namespace Utils {
     RE::TESQuest* GetQuest(const RE::InventoryEntryData* a_entryData);
     RE::TESForm* GetOwner(const RE::InventoryEntryData* a_entryData);
     std::vector<RE::TESFile*> GetOwningMods(const RE::InventoryEntryData* a_entryData);
+    RE::TESBoundObject* GetSelectedCraftingObject();
     RE::InventoryEntryData* GetSelectedEntryInMenu();
     uint32_t ConvertColor(const RE::NiColor& a_color);
     RE::NiColor ConvertColor(uint32_t a_color);
