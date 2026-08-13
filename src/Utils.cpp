@@ -98,6 +98,9 @@ RE::InventoryEntryData* Utils::GetSelectedEntryInMenu() {
     if (const auto a_item = GetSelectedEntryInMenuHelper<RE::BarterMenu>()) {
         return a_item;
     }
+    if (const auto a_item = GetSelectedEntryInMenuHelper<RE::GiftMenu>()) {
+        return a_item;
+    }
     return nullptr;
 }
 

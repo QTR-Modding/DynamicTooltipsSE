@@ -42,6 +42,7 @@ void Hooks::Install() {
     MenuHook<RE::ContainerMenu>::InstallHook();
     MenuHook<RE::InventoryMenu>::InstallHook();
     MenuHook<RE::BarterMenu>::InstallHook();
+    MenuHook<RE::GiftMenu>::InstallHook();
     MenuHook<RE::CraftingMenu>::InstallHook();
 }
 
@@ -71,6 +72,15 @@ RE::UI_MESSAGE_RESULTS Hooks::MenuHook<MenuType>::ProcessMessage_Hook(RE::UIMess
                 const auto ref_inv = refr->GetInventory();
                 for (auto& a_sub : Modules::modules | std::views::values) {
                     a_sub.BuildLoreCache(ref_inv);
+                }
+            }
+        }
+        if (MenuType::MENU_NAME == RE::GiftMenu::MENU_NAME) {
+            if (RE::TESObjectREFRPtr gifter; LookupReferenceByHandle(RE::GiftMenu::GetGifterRefHandle(), gifter) &&
+                                             gifter.get() != RE::PlayerCharacter::GetSingleton()) {
+                const auto gifter_inv = gifter->GetInventory();
+                for (auto& a_sub : Modules::modules | std::views::values) {
+                    a_sub.BuildLoreCache(gifter_inv);
                 }
             }
         }
