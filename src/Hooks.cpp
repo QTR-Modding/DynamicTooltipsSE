@@ -2,6 +2,31 @@
 #include "Modules.h"
 
 namespace {
+    class MagicMenuSpellVisitor final : public RE::Actor::ForEachSpellVisitor {
+    public:
+        explicit MagicMenuSpellVisitor(Module& a_module) : module(a_module) {}
+
+        RE::BSContainer::ForEachResult Visit(RE::SpellItem* a_spell) override {
+            module.BuildSpellLoreCache(a_spell);
+            return RE::BSContainer::ForEachResult::kContinue;
+        }
+
+    private:
+        Module& module;
+    };
+
+    void BuildMagicLoreCache() {
+        const auto module = Modules::modules.find(Modules::Modules::WhichMods);
+        if (module == Modules::modules.end() || !module->second.IsEnabled()) {
+            return;
+        }
+
+        if (const auto player = RE::PlayerCharacter::GetSingleton()) {
+            MagicMenuSpellVisitor visitor(module->second);
+            player->VisitSpells(visitor);
+        }
+    }
+
     void BuildCraftingLoreCache(RE::CraftingMenu* a_menu) {
         const auto module = Modules::modules.find(Modules::Modules::WhichMods);
         if (module == Modules::modules.end() || !module->second.IsEnabled()) {
@@ -43,12 +68,25 @@ void Hooks::Install() {
     MenuHook<RE::InventoryMenu>::InstallHook();
     MenuHook<RE::BarterMenu>::InstallHook();
     MenuHook<RE::GiftMenu>::InstallHook();
+    MenuHook<RE::MagicMenu>::InstallHook();
     MenuHook<RE::CraftingMenu>::InstallHook();
 }
 
 template <typename MenuType>
 RE::UI_MESSAGE_RESULTS Hooks::MenuHook<MenuType>::ProcessMessage_Hook(RE::UIMessage& a_message) {
     const auto msg_type = static_cast<int>(a_message.type.get());
+    if constexpr (std::is_same_v<MenuType, RE::MagicMenu>) {
+        if (msg_type == 1) {
+            BuildMagicLoreCache();
+        } else if (msg_type == 3) {
+            update_on_next = false;
+            for (auto& a_sub : Modules::modules | std::views::values) {
+                a_sub.ClearLoreCache();
+            }
+        }
+        return _ProcessMessage(this, a_message);
+    }
+
     if constexpr (std::is_same_v<MenuType, RE::CraftingMenu>) {
         if (msg_type == 1) {
             BuildCraftingLoreCache(this);

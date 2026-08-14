@@ -14,6 +14,7 @@ struct Module {
     std::string_view GetTitle() const { return title; }
     std::string GetLore() const;
     void BuildLoreCache(RE::TESBoundObject* a_obj);
+    void BuildSpellLoreCache(RE::SpellItem* a_spell);
     void BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv);
     void BuildLoreCache(const RE::ItemList* a_itemList);
     void ClearLoreCache();
@@ -30,6 +31,7 @@ struct Module {
 private:
     using LoreCache = std::unordered_set<RE::TESBoundObject*>;
     LoreCache loreCache;
+    std::unordered_set<RE::EffectSetting*> spellLoreCache;
     RE::BGSKeyword* kw;
     std::string title;
     ModuleFeatures features;

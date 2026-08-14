@@ -10,6 +10,10 @@ std::string Module::GetLore() const {
         RE::InventoryEntryData craftingEntry(a_obj, 1);
         return features.getLore(&craftingEntry);
     }
+    if (const auto a_obj = Utils::GetSelectedMagicObject()) {
+        RE::InventoryEntryData magicEntry(a_obj, 1);
+        return features.getLore(&magicEntry);
+    }
     return "";
 }
 
@@ -30,6 +34,19 @@ void Module::BuildLoreCache(RE::TESBoundObject* a_obj) {
 
     a_kw_form->AddKeyword(kw);
     loreCache.insert(a_obj);
+}
+
+void Module::BuildSpellLoreCache(RE::SpellItem* a_spell) {
+    if (!a_spell) {
+        return;
+    }
+
+    for (const auto effect : a_spell->effects) {
+        if (effect && effect->baseEffect && !spellLoreCache.contains(effect->baseEffect)) {
+            effect->baseEffect->AddKeyword(kw);
+            spellLoreCache.insert(effect->baseEffect);
+        }
+    }
 }
 
 void Module::BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv) {
@@ -65,6 +82,11 @@ void Module::ClearLoreCache() {
         }
     }
     loreCache.clear();
+
+    for (const auto effect : spellLoreCache) {
+        effect->RemoveKeyword(kw);
+    }
+    spellLoreCache.clear();
 }
 
 Module::Module(const std::string& a_name, const ModuleFeatures& a_features) : features(a_features) {
