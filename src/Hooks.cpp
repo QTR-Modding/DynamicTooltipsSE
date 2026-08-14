@@ -7,7 +7,7 @@ namespace {
         explicit MagicMenuSpellVisitor(Module& a_module) : module(a_module) {}
 
         RE::BSContainer::ForEachResult Visit(RE::SpellItem* a_spell) override {
-            module.BuildSpellLoreCache(a_spell);
+            module.BuildLoreCache(a_spell);
             return RE::BSContainer::ForEachResult::kContinue;
         }
 

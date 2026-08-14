@@ -18,7 +18,20 @@ std::string Module::GetLore() const {
 }
 
 void Module::BuildLoreCache(RE::TESBoundObject* a_obj) {
-    if (!a_obj || !a_obj->GetPlayable() || a_obj->Is(RE::FormType::LeveledItem)) {
+    if (!a_obj || a_obj->Is(RE::FormType::LeveledItem) ||
+        (!a_obj->Is(RE::FormType::Spell) && !a_obj->GetPlayable())) {
+        return;
+    }
+
+    if (a_obj->Is(RE::FormType::Spell)) {
+        if (const auto spell = a_obj->As<RE::SpellItem>()) {
+            for (const auto effect : spell->effects) {
+                if (effect && effect->baseEffect && !loreCache.contains(effect->baseEffect)) {
+                    effect->baseEffect->AddKeyword(kw);
+                    loreCache.insert(effect->baseEffect);
+                }
+            }
+        }
         return;
     }
 
@@ -34,19 +47,6 @@ void Module::BuildLoreCache(RE::TESBoundObject* a_obj) {
 
     a_kw_form->AddKeyword(kw);
     loreCache.insert(a_obj);
-}
-
-void Module::BuildSpellLoreCache(RE::SpellItem* a_spell) {
-    if (!a_spell) {
-        return;
-    }
-
-    for (const auto effect : a_spell->effects) {
-        if (effect && effect->baseEffect && !spellLoreCache.contains(effect->baseEffect)) {
-            effect->baseEffect->AddKeyword(kw);
-            spellLoreCache.insert(effect->baseEffect);
-        }
-    }
 }
 
 void Module::BuildLoreCache(const RE::TESObjectREFR::InventoryItemMap& a_inv) {
@@ -82,11 +82,6 @@ void Module::ClearLoreCache() {
         }
     }
     loreCache.clear();
-
-    for (const auto effect : spellLoreCache) {
-        effect->RemoveKeyword(kw);
-    }
-    spellLoreCache.clear();
 }
 
 Module::Module(const std::string& a_name, const ModuleFeatures& a_features) : features(a_features) {
