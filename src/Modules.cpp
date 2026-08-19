@@ -26,9 +26,12 @@ void Module::BuildLoreCache(RE::TESBoundObject* a_obj) {
     if (a_obj->Is(RE::FormType::Spell)) {
         if (const auto spell = a_obj->As<RE::SpellItem>()) {
             for (const auto effect : spell->effects) {
-                if (effect && effect->baseEffect && !loreCache.contains(effect->baseEffect)) {
-                    effect->baseEffect->AddKeyword(kw);
-                    loreCache.insert(effect->baseEffect);
+                if (effect && effect->baseEffect) {
+                    if (!loreCache.contains(effect->baseEffect)) {
+                        effect->baseEffect->AddKeyword(kw);
+                        loreCache.insert(effect->baseEffect);
+                    }
+                    return;
                 }
             }
         }
