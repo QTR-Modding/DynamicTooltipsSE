@@ -18,8 +18,7 @@ std::string Module::GetLore() const {
 }
 
 void Module::BuildLoreCache(RE::TESBoundObject* a_obj) {
-    if (!a_obj || a_obj->Is(RE::FormType::LeveledItem) ||
-        (!a_obj->Is(RE::FormType::Spell) && !a_obj->GetPlayable())) {
+    if (!a_obj || a_obj->Is(RE::FormType::LeveledItem) || !a_obj->GetPlayable()) {
         return;
     }
 
