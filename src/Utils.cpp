@@ -88,6 +88,17 @@ RE::TESBoundObject* Utils::GetSelectedCraftingObject() {
     return nullptr;
 }
 
+RE::TESBoundObject* Utils::GetSelectedMagicObject() {
+    if (const auto menu = RE::UI::GetSingleton()->GetMenu<RE::MagicMenu>()) {
+        if (const auto itemList = menu->GetRuntimeData().itemList) {
+            if (const auto item = itemList->GetSelectedItem()) {
+                return item->data.baseForm ? item->data.baseForm->As<RE::TESBoundObject>() : nullptr;
+            }
+        }
+    }
+    return nullptr;
+}
+
 RE::InventoryEntryData* Utils::GetSelectedEntryInMenu() {
     if (const auto a_item = GetSelectedEntryInMenuHelper<RE::InventoryMenu>()) {
         return a_item;

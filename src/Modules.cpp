@@ -10,11 +10,30 @@ std::string Module::GetLore() const {
         RE::InventoryEntryData craftingEntry(a_obj, 1);
         return features.getLore(&craftingEntry);
     }
+    if (const auto a_obj = Utils::GetSelectedMagicObject()) {
+        RE::InventoryEntryData magicEntry(a_obj, 1);
+        return features.getLore(&magicEntry);
+    }
     return "";
 }
 
 void Module::BuildLoreCache(RE::TESBoundObject* a_obj) {
-    if (!a_obj || !a_obj->GetPlayable() || a_obj->Is(RE::FormType::LeveledItem)) {
+    if (!a_obj || a_obj->Is(RE::FormType::LeveledItem) || !a_obj->GetPlayable()) {
+        return;
+    }
+
+    if (a_obj->Is(RE::FormType::Spell)) {
+        if (const auto spell = a_obj->As<RE::SpellItem>()) {
+            for (const auto effect : spell->effects) {
+                if (effect && effect->baseEffect) {
+                    if (!loreCache.contains(effect->baseEffect)) {
+                        effect->baseEffect->AddKeyword(kw);
+                        loreCache.insert(effect->baseEffect);
+                    }
+                    return;
+                }
+            }
+        }
         return;
     }
 

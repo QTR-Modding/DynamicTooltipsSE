@@ -28,7 +28,7 @@ struct Module {
     std::string GetKeywordName() const;
 
 private:
-    using LoreCache = std::unordered_set<RE::TESBoundObject*>;
+    using LoreCache = std::unordered_set<RE::TESForm*>;
     LoreCache loreCache;
     RE::BGSKeyword* kw;
     std::string title;
