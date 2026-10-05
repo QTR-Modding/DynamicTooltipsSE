@@ -16,7 +16,7 @@ cmake_minimum_required(VERSION 3.21)
 # Set your project name. This will be the name of your SKSE .dll file.
 set(AUTHOR_NAME "Quantumyilmaz")
 set(PRODUCT_NAME "DynamicTooltipsSE")
-project(${PRODUCT_NAME} VERSION 1.0.5.1 LANGUAGES CXX)
+project(${PRODUCT_NAME} VERSION 1.0.6.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
@@ -66,7 +66,7 @@ include(${COMMONLIB_SRC_DIR}/cmake/CommonLibSSE.cmake)
 
 add_commonlibsse_plugin(
   ${PROJECT_NAME}
-  AUTHOR AUTHOR_NAME
+  AUTHOR "${AUTHOR_NAME}"
   SOURCES ${headers} ${sources}
 )
 
